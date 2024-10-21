@@ -1,0 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+header {
+    background-color: #1c1c1c;
+    color: #ffffff;
+    padding: 1em;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.2em;
+    font-weight: 600;
+}
+
+.main-content {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2em;
+    gap: 2em;
+    justify-content: center;
+    background-color: #181818;
+    margin: 2em auto;
+    max-width: 1200px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.movie-card {
+    flex: 1 1 280px;
+    max-width: 280px;
+    padding: 1em;
+    background: #232323;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.movie-card img {
+    max-width: 100%;
+    border-radius: 12px;
+}
+
+.movie-card:hover {
+    transform: scale(1.08);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+}
+
+.card-title {
+    margin-top: 1em;
+    font-size: 1.6em;
+    font-weight: 600;
+}
+
+.movie-description {
+    flex: 2 1 600px;
+    padding: 1.5em;
+    background: #1e1e1e;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border-radius: 12px;
+}
+
+.movie-description h2 {
+    margin-top: 0;
+    font-size: 1.9em;
+}
+
+.movie-description p {
+    line-height: 1.8;
+}
+
+.movie-description a {
+    display: inline-block;
+    margin-top: 1em;
+    padding: 0.6em 1.4em;
+    background-color: #00adb5;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.movie-description a:hover {
+    background-color: #008b8d;
+    transform: scale(1.05);
+}
+
+.additional-info {
+    margin-top: 2em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.additional-info h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.info-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 45%;
+    background-color: #333;
+    border-radius: 12px;
+    padding: 1.2em;
+}
+
+.info-list li {
+    padding: 0.6em 0;
+    border-bottom: 1px solid #444;
+}
+
+.promotional-videos {
+    padding: 2.2em;
+    background-color: #1c1c1c;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border-radius: 12px;
+    margin: 2.2em auto;
+    max-width: 1200px;
+}
+
+.promotional-videos h2 {
+    margin-top: 0;
+    font-size: 1.9em;
+}
+
+.video-banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 220px;
+    background-color: #444;
+    border-radius: 12px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.video-banner:hover {
+    background-color: #555;
+}
+
+#video-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #00adb5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#video-button:hover {
+    background-color: #008b8d;
+    transform: scale(1.05);
+}
+
+.video-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    justify-content: center;
+    align-items: center;
+}
+
+#video-modal .close {
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+}
+
+#video-frame {
+    width: 85%;
+    height: 85%;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+        padding: 1.2em;
+    }
+
+    .movie-card, .movie-description {
+        flex: 1 1 100%;
+    }
+
+    .additional-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .info-list {
+        width: 100%;
+    }
+
+    .characters-voice-actors {
+        padding: 1.2em;
+    }
+}
