@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Episodes</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            overflow-y: scroll;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #555;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .progress-bar {
+            width: 0;
+            height: 5px;
+            background-color: #4caf50;
+        }
+
+        .episodes-container {
+            max-width: 800px;
+            margin: 60px auto 0;
+            padding: 20px;
+            background-color: #444;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .episode {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #555;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .episode:last-child {
+            border-bottom: none;
+        }
+
+        .episode:hover {
+            background-color: #555;
+        }
+
+        .episode-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .episode-number {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .resume-btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .resume-btn:hover {
+            background-color: #45a049;
+        }
+
+        .recent {
+            background-color: #3e8e41;
+        }
+
+        .watched {
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- Resume button will appear here -->
+    <button id="resume-btn" class="resume-btn" style="display: none;">Resume Last Watched Episode</button>
+
+    <div class="episodes-container" id="episodes-container">
+        <!-- Episodes will be inserted here by JavaScript -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const episodesContainer = document.getElementById('episodes-container');
+            const progressBar = document.getElementById('progress-bar');
+            const resumeBtn = document.getElementById('resume-btn');
+            let lastWatched = localStorage.getItem('lastWatched') || null;
+            let lastWatchedTime = localStorage.getItem('lastWatchedTime') || 0;
+
+            // Function to update progress bar
+            function updateProgressBar(value) {
+                progressBar.style.width = value + '%';
+            }
+
+            // Function to get query parameter by name
+            function getQueryParam(name) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
+            }
+
+            // Fetch episodes based on the id from the query parameter
+            function fetchEpisodes(id) {
+                if (!id) {
+                    episodesContainer.innerHTML = '<p>No ID provided</p>';
+                    return;
+                }
+
+                const apiUrl = `https://aniwatch-api-net.vercel.app/anime/episodes/${id}`;
+                
+                // Show progress as 0% when starting
+                updateProgressBar(0);
+
+                fetch(apiUrl)
+                    .then(response => {
+                        updateProgressBar(30);
+                        return response.json();
+                    })
+                    .then(data => {
+                        updateProgressBar(60);
+                        if (data.episodes && data.episodes.length > 0) {
+                            renderEpisodes(data.episodes);
+                            updateProgressBar(100);
+                        } else {
+                            episodesContainer.innerHTML = '<p>No episodes found</p>';
+                            updateProgressBar(100);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        episodesContainer.innerHTML = '<p>Error loading episodes</p>';
+                        updateProgressBar(100);
+                    });
+            }
+
+            // Render episodes and mark last watched episode
+            function renderEpisodes(episodes) {
+                episodesContainer.innerHTML = ''; // Clear previous content
+
+                episodes.forEach(episode => {
+                    const episodeElement = document.createElement('a');
+                    episodeElement.className = 'episode';
+                    episodeElement.href = `watch.html?id=${episode.episodeId}`;
+                    episodeElement.innerHTML = `
+                        <div>
+                            <div class="episode-title">${episode.title}</div>
+                            <div class="episode-number">Episode ${episode.number}</div>
+                        </div>
+                    `;
+
+                    // Add last watched episode details
+                    if (episode.episodeId === lastWatched) {
+                        episodeElement.classList.add('recent');
+                        resumeBtn.style.display = 'block';
+                        resumeBtn.addEventListener('click', () => {
+                            window.location.href = `watch.html?id=${lastWatched}&time=${lastWatchedTime}`;
+                        });
+                    }
+
+                    episodeElement.addEventListener('click', () => {
+                        localStorage.setItem('lastWatched', episode.episodeId);
+                        localStorage.setItem('lastWatchedTime', 0); // Reset when clicked to start from 0
+                    });
+
+                    episodesContainer.appendChild(episodeElement);
+                });
+            }
+
+            // Get the ID from query parameters and fetch episodes
+            const episodeId = getQueryParam('id');
+            fetchEpisodes(episodeId);
+        });
+    </script>
+</body>
+</html>
