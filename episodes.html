@@ -91,6 +91,40 @@
         .watched {
             color: #4caf50;
         }
+
+        .anime-progress-container {
+            margin-top: 20px;
+            background-color: #555;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        .anime-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .anime-progress {
+            margin-bottom: 10px;
+            color: #aaa;
+        }
+
+        .anime-resume-btn {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .anime-resume-btn:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -99,30 +133,25 @@
     </div>
 
     <!-- Resume button will appear here -->
-    <button id="resume-btn" class="resume-btn" style="display: none;">Resume Last Watched Episode</button>
+    <button id="resume-btn" class="resume-btn" style="display: none;"></button>
 
     <div class="episodes-container" id="episodes-container">
         <!-- Episodes will be inserted here by JavaScript -->
     </div>
 
+    <!-- List of animes with progress -->
+    <div class="anime-progress-container" id="anime-progress-container">
+        <h3>Continue Watching</h3>
+        <!-- Anime progress will be inserted here by JavaScript -->
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const episodesContainer = document.getElementById('episodes-container');
-            const progressBar = document.getElementById('progress-bar');
             const resumeBtn = document.getElementById('resume-btn');
-            let lastWatched = localStorage.getItem('lastWatched') || null;
-            let lastWatchedTime = localStorage.getItem('lastWatchedTime') || 0;
+            const animeProgressContainer = document.getElementById('anime-progress-container');
 
-            // Function to update progress bar
-            function updateProgressBar(value) {
-                progressBar.style.width = value + '%';
-            }
-
-            // Function to get query parameter by name
-            function getQueryParam(name) {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get(name);
-            }
+            let watchedAnimes = JSON.parse(localStorage.getItem('watchedAnimes')) || {};
 
             // Fetch episodes based on the id from the query parameter
             function fetchEpisodes(id) {
@@ -132,34 +161,24 @@
                 }
 
                 const apiUrl = `https://aniwatch-api-net.vercel.app/anime/episodes/${id}`;
-                
-                // Show progress as 0% when starting
-                updateProgressBar(0);
 
                 fetch(apiUrl)
-                    .then(response => {
-                        updateProgressBar(30);
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(data => {
-                        updateProgressBar(60);
                         if (data.episodes && data.episodes.length > 0) {
-                            renderEpisodes(data.episodes);
-                            updateProgressBar(100);
+                            renderEpisodes(data.episodes, id);
                         } else {
                             episodesContainer.innerHTML = '<p>No episodes found</p>';
-                            updateProgressBar(100);
                         }
                     })
                     .catch(error => {
                         console.error('Error fetching data:', error);
                         episodesContainer.innerHTML = '<p>Error loading episodes</p>';
-                        updateProgressBar(100);
                     });
             }
 
             // Render episodes and mark last watched episode
-            function renderEpisodes(episodes) {
+            function renderEpisodes(episodes, animeId) {
                 episodesContainer.innerHTML = ''; // Clear previous content
 
                 episodes.forEach(episode => {
@@ -173,28 +192,66 @@
                         </div>
                     `;
 
-                    // Add last watched episode details
-                    if (episode.episodeId === lastWatched) {
+                    // Check if anime exists in localStorage and update resume button
+                    if (watchedAnimes[animeId] && watchedAnimes[animeId].lastWatchedEpisodeId === episode.episodeId) {
                         episodeElement.classList.add('recent');
                         resumeBtn.style.display = 'block';
+                        resumeBtn.innerHTML = `Continue Episode ${episode.number}`;
                         resumeBtn.addEventListener('click', () => {
-                            window.location.href = `watch.html?id=${lastWatched}&time=${lastWatchedTime}`;
+                            window.location.href = `watch.html?id=${watchedAnimes[animeId].lastWatchedEpisodeId}&time=${watchedAnimes[animeId].lastWatchedTime}`;
                         });
                     }
 
                     episodeElement.addEventListener('click', () => {
-                        localStorage.setItem('lastWatched', episode.episodeId);
-                        localStorage.setItem('lastWatchedTime', 0); // Reset when clicked to start from 0
+                        // Store the last watched episode data and time
+                        const lastWatchedTime = localStorage.getItem(`lastWatchedTime_${episode.episodeId}`) || 0;
+
+                        if (!watchedAnimes[animeId]) {
+                            watchedAnimes[animeId] = {
+                                lastWatchedEpisodeId: episode.episodeId,
+                                lastWatchedTime: lastWatchedTime,
+                                episodesWatchedCount: 1,
+                            };
+                        } else {
+                            watchedAnimes[animeId].lastWatchedEpisodeId = episode.episodeId;
+                            watchedAnimes[animeId].lastWatchedTime = lastWatchedTime; 
+                            watchedAnimes[animeId].episodesWatchedCount += 1; 
+                        }
+
+                        localStorage.setItem('watchedAnimes', JSON.stringify(watchedAnimes));
                     });
 
                     episodesContainer.appendChild(episodeElement);
                 });
+
+                // Update anime progress section
+                updateAnimeProgressSection();
+            }
+
+            // Update the progress of watched animes
+            function updateAnimeProgressSection() {
+                animeProgressContainer.innerHTML = ''; // Clear previous content
+                for (const animeId in watchedAnimes) {
+                    const animeProgressElement = document.createElement('div');
+                    animeProgressElement.innerHTML = `
+                        <div class="anime-title">Anime ID: ${animeId}</div>
+                        <div class="anime-progress">Episodes watched: ${watchedAnimes[animeId].episodesWatchedCount}</div>
+                        <div class="anime-resume-btn" onclick="window.location.href='watch.html?id=${watchedAnimes[animeId].lastWatchedEpisodeId}&time=${watchedAnimes[animeId].lastWatchedTime}'">
+                            Continue from Episode ${watchedAnimes[animeId].lastWatchedEpisodeId}
+                        </div>
+                    `;
+                    animeProgressContainer.appendChild(animeProgressElement);
+                }
             }
 
             // Get the ID from query parameters and fetch episodes
-            const episodeId = getQueryParam('id');
+            const episodeId = new URLSearchParams(window.location.search).get('id');
             fetchEpisodes(episodeId);
+
+            // Initial update of anime progress section
+            updateAnimeProgressSection();
         });
     </script>
+    
 </body>
 </html>
