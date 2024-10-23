@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="AniVerse is an anime streaming website . Watch all your Favourtie anime subbed and dubbed in HD !!">
-    <meta name="keywords" content="Anime , anime , AniTEams, anime shows , ">
+    <meta name="keywords" content="Anime , anime , AniVerse, anime shows , ">
     
     <title>AniVerse - Homes</title>
     
@@ -17,6 +17,16 @@
 </head>
 
 <body>
+    <div class="top-menu">
+        <a href="quick-search.html">
+            <button onclick="vibrateDevice()" class="quick-search-btn">
+                <svg class="menu-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill="currentColor"/>
+                </svg>
+                <span class="menu-label">Quick Search</span>
+            </button>
+        </a>
+    </div>
    
 <div id="slider" class="position-relative">
         <!-- Slides will be injected here by JavaScript -->
@@ -40,30 +50,36 @@
         <!-- Movie cards will be dynamically generated here -->
     </div>
 </div>
-  
-<!-- Bottom Menu -->
-<!-- Bottom Menu -->
-<div class="bottom-menu">
-    <a href="index.html">
-        <button onclick="vibrateDevice()">
-            <svg class="menu-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 20V14H14V20H19V12H22L12 3L2 12H5V20H10Z" fill="currentColor"/>
-            </svg>
-            <span class="menu-label">Home</span>
-        </button>
-    </a>
-    <a href="quick-search.html">
-        <button onclick="vibrateDevice()">
-            <svg class="menu-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill="currentColor"/>
-            </svg>
-            <span class="menu-label">Quick Search</span>
-        </button>
-    </a>
-</div>
-
 <!-- Menu Styles -->
 <style>
+
+.top-menu {
+    position: absolute; /* Position the menu absolutely */
+    top: 20px; /* Distance from the top */
+    right: 20px; /* Distance from the right */
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.quick-search-btn {
+    display: flex; /* Flexbox for icon and text alignment */
+    align-items: center; /* Center items vertically */
+    background-color: #007BFF; /* Button background color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Padding for the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Transition effect for background color */
+}
+
+.quick-search-btn:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+.menu-icon {
+    margin-right: 8px; /* Space between icon and text */
+}
+
     body {
         margin: 0;
         padding: 0;
